@@ -13,7 +13,7 @@ def get_case_data():
     df = df[df['county'] != 'Unknown']
     df['deaths'] = df['deaths'].fillna(0)
 
-    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d').dt.date
 
     df.loc[(df['county'] == 'New York City') & (df['fips'].isnull()), 'fips'] = 36061.0
     df.loc[(df['county'] == 'Joplin') & (df['fips'].isnull()), 'fips'] = 29097.0
@@ -27,18 +27,22 @@ def get_case_data():
     df['cases_total'] = df['cases'].apply(lambda x: np.cumsum(x)[0])
     df['deaths_total'] = df['deaths'].apply(lambda x: np.cumsum(x)[0])
 
+    df['group_id'] = df.groupby('date').grouper.group_info[0]
+
     return df
 
 cases_df = get_case_data()
+
+
+
+
+
+
+
 
 # importing county json info
 with open('./counties.json') as f:
     counties = json.load(f)
 
-# grouping case data by date and creating list of seperate dataframes for each date
-cases_df_grouped = cases_df.groupby('date')
-
-df_list = []
-for key, item in cases_df_grouped:
-    df = pd.DataFrame(cases_df_grouped.get_group(key))
-    df_list.append(df)
+if __name__ == '__main__':
+    get_case_data()
