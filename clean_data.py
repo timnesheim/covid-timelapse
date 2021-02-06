@@ -33,13 +33,6 @@ def get_case_data():
 
 cases_df = get_case_data()
 
-
-
-
-
-
-
-
 # importing county json info
 with open('./counties.json') as f:
     counties = json.load(f)
